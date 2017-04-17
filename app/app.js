@@ -13,23 +13,16 @@ MapsCtrl.$inject = ['TaxiService', '$scope', '$http', '$q'];
 function MapsCtrl (TaxiService, $scope, $http, $q) {
   // map object
   var gmaps = this;
-  gmaps.map = {
-    control: {},
-    center: {
-        latitude: 60.19,
-        longitude: 24.94
-    },
-    zoom: 10
+  var mapOptions = {
+        zoom: 10,
+        center: new google.maps.LatLng(60.1900, 24.9400),
+        mapTypeId: google.maps.MapTypeId.TERRAIN
   };
+
+  gmaps.map = new google.maps.Map(document.getElementById('map'), mapOptions);
+
   
-// marker object
-// $scope.marker = {
-//   center: {
-//        latitude: -37.812150,
-//        longitude: 144.971008
-//    }
-// }
-  
+
 
   
   // directions object -- with defaults
@@ -79,15 +72,19 @@ function MapsCtrl (TaxiService, $scope, $http, $q) {
       };
       coordinates.origin_loc=results[0].lat+','+results[0].lng;
       coordinates.dest_loc=results[1].lat+','+results[1].lng;
-      TaxiService.getEntity(coordinates.origin_loc, gmaps);
+      TaxiService.getEntity(coordinates.origin_loc, gmaps)
+      .success(function(response){
+        TaxiService.getRates(response.handle, coordinates, gmaps);
+
+      });
+
+      
     });
 
-
-
-
-  
-    
     }
+
+
+
 }
 
 
@@ -104,8 +101,8 @@ service.getMap = function (request, gmaps) {
       directionsService.route(request, function (response, status) {
       if (status === google.maps.DirectionsStatus.OK) {
         directionsDisplay.setDirections(response);
-        directionsDisplay.setMap(gmaps.map.control.getGMap());
-        //directionsDisplay.setPanel(document.getElementById('directionsList'));
+        directionsDisplay.setMap(gmaps.map);
+        directionsDisplay.setPanel(document.getElementById('directionsList'));
         //$scope.directions.showList = true;
       } else {
         alert('Google route unsuccesfull!');
@@ -118,16 +115,14 @@ service.getMap = function (request, gmaps) {
 service.getEntity = function(locate, gmaps){
   var url='https://api.taxifarefinder.com/entity?key=C3EcRac5eNec';
   var method='JSONP';
-  $http({
+  var response = $http({
     method: method, 
     url: url,
     params: { 
       location: locate,
-      callback: 'JSON_CALLBACK' }})
- .success(function (response) {
-    console.log(response.status);
-    gmaps.data = response;
-  });
+      callback: 'JSON_CALLBACK' }});
+  return response;
+  
   }
 
 
@@ -143,6 +138,7 @@ service.getRates = function (entity, coordinates, gmaps){
       destination: coordinates.dest_loc,
       callback: 'JSON_CALLBACK' }})
  .success(function (response) {
+    gmaps.data=response;
     console.log(response);
   });
 }

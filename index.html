@@ -8,7 +8,7 @@
     <script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/angularjs/1.2.22/angular.min.js" /></script>
     <script type="text/javascript" src="app/lodash.js" ></script>
     <script type="text/javascript" src="app/app.js" ></script>
-    <script src='https://maps.googleapis.com/maps/api/js'></script>
+    <script src='https://maps.googleapis.com/maps/api/js?key=AIzaSyBKyjL1dVNRJtVNMsdu7vr5lC0X9JTTfWc'></script>
     <script data-require="angular-google-maps@*" data-semver="1.1.4" src="https://rawgit.com/nlaplante/angular-google-maps/1.1.4/dist/angular-google-maps.min.js"></script>
 
     <link rel="stylesheet" href="css/style.css" />
@@ -25,6 +25,7 @@
   </head>
 
   <body ng-controller="MapsCtrl as gmaps">
+  
     <div class="panel panel-default">
     <h1>TaxiScanner App</h1>
         <form class="form-horizontal" role="form">
@@ -47,6 +48,8 @@
           </div>
         </form>
 
+        <div ng-show="gmaps.data">The total fare for you trip is: {{gmaps.data}} €</div>
+
 
 
       <div class="panel-body">
@@ -54,7 +57,7 @@
           <marker coords="gmaps.marker.center"></marker>
         </google-map>
 
-        <div> {{gmaps.data}}  {{gmaps.status}}</div>
+        
         
        <!-- <div id="directionsList" ng-show="directions.showList" class="panel panel-primary"></div> -->
       </div>
