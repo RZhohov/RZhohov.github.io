@@ -1,0 +1,73 @@
+/* Put your css in here */
+
+.navbar-brand {
+  padding-top: 25px;
+}
+
+.navbar-brand h1 { /* Site name */
+  color: #DFEBFC;
+  font-size: 3em;
+  text-transform: uppercase;
+  font-weight: bold;
+  text-shadow: 1px 1px 1px #222;
+  margin-top: 0;
+  margin-bottom: 0;
+  line-height: .75;
+}
+
+#logo-img {
+  background: url('../images/taxi.png') no-repeat;
+  width: 210px;
+  height: 210px;
+  margin: 10px 10px 10px 0;
+}
+
+#calc-right {
+	width: 240px;
+	float: left;
+	margin: 0px 0px 10px 0px;
+}
+
+#calc-right p {
+    margin: 15px;
+}
+
+#calc-right span {
+    display: block;
+    width: inherit;
+    text-align: center;
+}
+
+#spinner {
+  background: url('../images/spinner.gif') no-repeat;
+  width: 100px;
+  height:100px;
+  
+}
+
+#calc-right #estimated {
+    text-shadow: 0 1px 0px rgba(255,255,255,1);
+    font-weight: bold;
+    line-height: 20px;
+    font-size: 1.5em;
+}
+
+#calc-right #fare {
+    text-shadow: 0 1px 0px rgba(255,255,255,1);
+    line-height: 35px;
+    padding: 20px 0;
+    font-size: 2em;
+    color: #060;
+}
+
+#calc-right #distance, #calc-right #time {
+    text-shadow: 0 1px 0px rgba(255,255,255,1);
+    line-height: 20px;
+    font-size: 1.2em;
+}
+
+
+#map {
+    height:420px;
+    width:600px;
+}
