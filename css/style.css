@@ -4,9 +4,9 @@
   padding-top: 25px;
 }
 
-.navbar-brand h1 { /* Restaurant name */
+.navbar-brand h1 { /* Site name */
   color: #DFEBFC;
-  font-size: 2em;
+  font-size: 3em;
   text-transform: uppercase;
   font-weight: bold;
   text-shadow: 1px 1px 1px #222;
@@ -25,6 +25,7 @@
 #calc-right {
 	width: 240px;
 	float: left;
+	margin: 0px 0px 10px 0px;
 }
 
 #calc-right p {
@@ -35,6 +36,13 @@
     display: block;
     width: inherit;
     text-align: center;
+}
+
+#spinner {
+  background: url('../images/spinner.gif') no-repeat;
+  width: 100px;
+  height:100px;
+  
 }
 
 #calc-right #estimated {

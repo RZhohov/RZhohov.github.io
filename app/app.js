@@ -1,18 +1,15 @@
 
-var app = angular.module('TaxiScanner', ['google-maps']);
+var app = angular.module('TaxiScanner', ['google-maps', 'google.places']);
 
-app.controller('MapsCtrl', MapsCtrl);
+app.controller('TaxiCtrl', TaxiCtrl);
 app.service('TaxiService', TaxiService);
 
 
-
-
-
-
-MapsCtrl.$inject = ['TaxiService', '$scope', '$http', '$q'];
-function MapsCtrl (TaxiService, $scope, $http, $q) {
+TaxiCtrl.$inject = ['TaxiService', '$scope', '$http', '$q'];
+function TaxiCtrl (TaxiService, $scope, $http, $q) {
   // map object
   var gmaps = this;
+  gmaps.loading=false;
   var mapOptions = {
         zoom: 10,
         center: new google.maps.LatLng(60.1900, 24.9400),
@@ -20,11 +17,6 @@ function MapsCtrl (TaxiService, $scope, $http, $q) {
   };
 
   gmaps.map = new google.maps.Map(document.getElementById('map'), mapOptions);
-
-  
-
-
-  
   // directions object -- with defaults
   gmaps.directions = {
     origin: "",
@@ -32,34 +24,17 @@ function MapsCtrl (TaxiService, $scope, $http, $q) {
     showList: false
   }
   
-  //// get directions using google maps api
-  //   gmaps.getDirections = function () {
-  //   var request = {
-  //     origin: gmaps.directions.origin,
-  //     destination: gmaps.directions.destination,
-  //     travelMode: google.maps.DirectionsTravelMode.DRIVING
-  //   };
-
-  //   directionsService.route(request, function (response, status) {
-  //     if (status === google.maps.DirectionsStatus.OK) {
-  //       directionsDisplay.setDirections(response);
-  //       directionsDisplay.setMap($scope.map.control.getGMap());
-  //       //directionsDisplay.setPanel(document.getElementById('directionsList'));
-  //       //$scope.directions.showList = true;
-  //     } else {
-  //       alert('Google route unsuccesfull!');
-  //     }
-  //   });
-  // }
-
-
 
   gmaps.getDirections =function() {
+    gmaps.map = new google.maps.Map(document.getElementById('map'), mapOptions);
+    gmaps.data=null;
+    //console.log(gmaps.directions.origin.formatted_address);
     var request = {
-      origin: gmaps.directions.origin,
-      destination: gmaps.directions.destination,
+      origin: gmaps.directions.origin.formatted_address,
+      destination: gmaps.directions.destination.formatted_address,
       travelMode: google.maps.DirectionsTravelMode.DRIVING
     };
+    gmaps.loading=true;
 
 
     TaxiService.getMap(request, gmaps);
@@ -74,14 +49,14 @@ function MapsCtrl (TaxiService, $scope, $http, $q) {
       coordinates.dest_loc=results[1].lat+','+results[1].lng;
       TaxiService.getEntity(coordinates.origin_loc, gmaps)
       .success(function(response){
-        TaxiService.getRates(response.handle, coordinates, gmaps);
-
-      });
-
-      
-    });
-
-    }
+        TaxiService.getRates(response.handle, coordinates, gmaps).
+        success(function (response){
+          gmaps.data=response;
+          gmaps.loading=false;
+        });
+});
+});
+}
 
 
 
@@ -105,7 +80,7 @@ service.getMap = function (request, gmaps) {
         directionsDisplay.setPanel(document.getElementById('directionsList'));
         //$scope.directions.showList = true;
       } else {
-        alert('Google route unsuccesfull!');
+        alert('Route is unsuccesfull!');
       }
     });
   }
@@ -129,18 +104,14 @@ service.getEntity = function(locate, gmaps){
 service.getRates = function (entity, coordinates, gmaps){
   var url='https://api.taxifarefinder.com/fare?key=C3EcRac5eNec';
   var method='JSONP';
-  $http({
+  return $http({
     method: method, 
     url: url,
     params: { 
       entity_handle: entity,
       origin: coordinates.origin_loc,
       destination: coordinates.dest_loc,
-      callback: 'JSON_CALLBACK' }})
- .success(function (response) {
-    gmaps.data=response;
-    console.log(response);
-  });
+      callback: 'JSON_CALLBACK' }});
 }
 
 
