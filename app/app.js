@@ -38,6 +38,8 @@ function TaxiCtrl (TaxiService, $scope, $http, $q) {
 
 
     TaxiService.getMap(request, gmaps);
+
+    TaxiService.getRatesUber();
     
     $q.all([TaxiService.getCoordinates(request.origin, gmaps, $q), 
             TaxiService.getCoordinates(request.destination, gmaps, $q)])
@@ -124,6 +126,23 @@ service.getRates = function (entity, coordinates, gmaps){
       destination: coordinates.dest_loc,
       callback: 'JSON_CALLBACK' }});
 }
+
+
+//-f1tJC3o_30ASWGoqAKuxcrRJcXYKOI2fVKq3Hz9
+service.getRatesUber = function (){
+  var url='https://api.uber.com/v1.2/estimates/price?start_latitude=37.7752315&start_longitude=-122.418075&end_latitude=37.7752415&end_longitude=-122.518075&server_token=-f1tJC3o_30ASWGoqAKuxcrRJcXYKOI2fVKq3Hz9';
+  //var method='JSONP';
+  $http({
+  headers: {'Content-Type': 'application/json'},
+  method: 'GET',
+  url: url,
+  params: {callback: 'JSON_CALLBACK'}
+  })
+  .then(function(response){
+        console.log(response);
+      });
+
+};
 
 //SERVICE FOR GETTING COORDINATES
 service.getCoordinates = function(name, gmaps, $q){
