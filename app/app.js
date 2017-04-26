@@ -1,4 +1,3 @@
-
 var app = angular.module('TaxiScanner', ['google-maps', 'google.places']);
 
 app.controller('TaxiCtrl', TaxiCtrl);
@@ -35,11 +34,13 @@ function TaxiCtrl (TaxiService, $scope, $http, $q) {
       travelMode: google.maps.DirectionsTravelMode.DRIVING
     };
     gmaps.loading=true;
+    gmaps.error=false;
 
 
     TaxiService.getMap(request, gmaps);
     
-    $q.all([TaxiService.getCoordinates(request.origin, gmaps, $q), TaxiService.getCoordinates(request.destination, gmaps, $q)])
+    $q.all([TaxiService.getCoordinates(request.origin, gmaps, $q), 
+            TaxiService.getCoordinates(request.destination, gmaps, $q)])
     .then(function(results) {
       var coordinates = {
       origin_loc: '',
@@ -49,10 +50,20 @@ function TaxiCtrl (TaxiService, $scope, $http, $q) {
       coordinates.dest_loc=results[1].lat+','+results[1].lng;
       TaxiService.getEntity(coordinates.origin_loc, gmaps)
       .success(function(response){
+
         TaxiService.getRates(response.handle, coordinates, gmaps).
         success(function (response){
-          gmaps.data=response;
-          gmaps.loading=false;
+          if (response.status === 'OK'){
+            gmaps.data=response;
+            gmaps.loading=false;
+          }
+          else 
+          {
+            console.log("LOCATION PROBLEM");
+            gmaps.error=true;
+            gmaps.loading=false;
+          }
+          
         });
 });
 });
@@ -86,7 +97,7 @@ service.getMap = function (request, gmaps) {
   }
 
 
-
+//SERVICE FOR GETTING ENTITY FOR TAXIFARE API
 service.getEntity = function(locate, gmaps){
   var url='https://api.taxifarefinder.com/entity?key=C3EcRac5eNec';
   var method='JSONP';
@@ -100,7 +111,7 @@ service.getEntity = function(locate, gmaps){
   
   }
 
-
+//SERVICE FOR GETTING FARE
 service.getRates = function (entity, coordinates, gmaps){
   var url='https://api.taxifarefinder.com/fare?key=C3EcRac5eNec';
   var method='JSONP';
@@ -114,7 +125,7 @@ service.getRates = function (entity, coordinates, gmaps){
       callback: 'JSON_CALLBACK' }});
 }
 
-
+//SERVICE FOR GETTING COORDINATES
 service.getCoordinates = function(name, gmaps, $q){
   var deferred = $q.defer();
 
@@ -134,11 +145,4 @@ service.getCoordinates = function(name, gmaps, $q){
 
 
 }
-
-
-
-
-
-
-
 

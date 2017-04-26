@@ -67,6 +67,10 @@
 	<span id="distance" ng-show="gmaps.data.distance">Distance: {{gmaps.data.distance/1000 | number : 2}} km</span>
 	<span id="time" ng-show="gmaps.data.duration">Time: {{gmaps.data.duration/60 | number : 1}} min</span>
     </p>
+
+  <div class="alert alert-danger" ng-show="gmaps.error">
+  <span><strong>Your Location is not supported yet! Sorry.</strong></span>
+  </div>
 </div>
 </div>  
 
