@@ -71,3 +71,17 @@
     height:420px;
     width:600px;
 }
+
+
+@media screen and (min-width: 50px) and (max-width: 476px) {
+  .navbar-brand h1 {
+    font-size: 1em;
+  }
+
+  #map {
+    height:320px;
+    width:200px;
+}
+
+
+}
